@@ -2,13 +2,18 @@ package com.edwin.suburbscore.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FilterChip
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
@@ -24,11 +29,14 @@ fun PostListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    PostListUi(uiState)
+    PostListUi(uiState = uiState, onFilterClick = viewModel::onFilterSelect)
 }
 
 @Composable
-fun PostListUi(uiState: PostListUiState) {
+fun PostListUi(
+    uiState: PostListUiState,
+    onFilterClick: (String) -> Unit
+) {
     AnimatedContent(uiState) { targetState ->
         when (targetState) {
             PostListUiState.Error -> {
@@ -40,15 +48,36 @@ fun PostListUi(uiState: PostListUiState) {
             }
 
             is PostListUiState.Success -> {
-                PostListSuccess(targetState)
+                PostListSuccess(
+                    uiState = targetState,
+                    onFilterClick = onFilterClick
+                )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun PostListSuccess(uiState: PostListUiState.Success) {
+fun PostListSuccess(uiState: PostListUiState.Success, onFilterClick: (String) -> Unit) {
     Scaffold(
+        topBar = {
+            TopAppBar(content = {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    uiState.filters.forEach { filter ->
+                        FilterChip(
+                            selected = uiState.selectedFilters
+                                .map { it.lowercase() }
+                                .contains(filter),
+                            onClick = { onFilterClick(filter) },
+                            content = { Text(text = filter) }
+                        )
+                    }
+                }
+            })
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {}) {
                 Icon(

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Chip
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.edwin.suburbscore.model.Post
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostItem(post: Post) {
     Surface(
@@ -35,10 +38,19 @@ fun PostItem(post: Post) {
                 Column(
                     modifier = Modifier
                 ) {
-                    Text(
-                        text = post.suburb.toUpperCase(Locale.current),
-                        style = MaterialTheme.typography.overline
-                    )
+                    Row {
+                        Text(
+                            text = post.suburb.toUpperCase(Locale.current),
+                            style = MaterialTheme.typography.overline
+                        )
+
+                        Chip(onClick = {}) {
+                            Text(
+                                text = post.category.toUpperCase(Locale.current),
+                                style = MaterialTheme.typography.overline
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
