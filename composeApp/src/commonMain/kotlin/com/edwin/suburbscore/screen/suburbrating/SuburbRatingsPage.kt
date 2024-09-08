@@ -24,31 +24,33 @@ import com.edwin.suburbscore.model.SuburbRating
 
 @Composable
 fun SuburbRatingsPage(
+    modifier: Modifier = Modifier,
     viewModel: SuburbRatingsViewModel = viewModel { SuburbRatingsViewModel() }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    SuburbRatingUi(uiState)
+    SuburbRatingUi(modifier, uiState)
 }
 
 @Composable
 private fun SuburbRatingUi(
+    modifier: Modifier = Modifier,
     uiState: SuburbRatingsUiState
 ) {
     AnimatedContent(uiState) { targetState ->
         when (targetState) {
             SuburbRatingsUiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
 
             is SuburbRatingsUiState.Success -> {
-                SuburbRatingsList(targetState.suburbRatings)
+                SuburbRatingsList(modifier, targetState.suburbRatings)
             }
 
             is SuburbRatingsUiState.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Something went wrong", modifier = Modifier.padding(16.dp))
                 }
             }
@@ -57,8 +59,11 @@ private fun SuburbRatingUi(
 }
 
 @Composable
-fun SuburbRatingsList(suburbRatings: List<SuburbRating>) {
-    LazyColumn {
+fun SuburbRatingsList(
+    modifier: Modifier = Modifier,
+    suburbRatings: List<SuburbRating>
+) {
+    LazyColumn(modifier = modifier) {
         items(suburbRatings, key = { it.name }) { rating ->
             SuburbRatingItem(rating)
         }
