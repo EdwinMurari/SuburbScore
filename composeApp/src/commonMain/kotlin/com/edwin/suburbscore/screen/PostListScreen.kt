@@ -4,8 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FilterChip
@@ -19,9 +22,10 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.edwin.suburbscore.component.PostItem
 
 @Composable
 fun PostListScreen(
@@ -29,13 +33,18 @@ fun PostListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    PostListUi(uiState = uiState, onFilterClick = viewModel::onFilterSelect)
+    PostListUi(
+        uiState = uiState,
+        onCategorySelect = viewModel::onCategorySelect,
+        onSuburbSelect = viewModel::onSuburbSelect
+    )
 }
 
 @Composable
 fun PostListUi(
     uiState: PostListUiState,
-    onFilterClick: (String) -> Unit
+    onCategorySelect: (String) -> Unit,
+    onSuburbSelect: (String) -> Unit
 ) {
     AnimatedContent(uiState) { targetState ->
         when (targetState) {
@@ -50,7 +59,8 @@ fun PostListUi(
             is PostListUiState.Success -> {
                 PostListSuccess(
                     uiState = targetState,
-                    onFilterClick = onFilterClick
+                    onCategorySelect = onCategorySelect,
+                    onSuburbSelect = onSuburbSelect
                 )
             }
         }
@@ -59,19 +69,23 @@ fun PostListUi(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun PostListSuccess(uiState: PostListUiState.Success, onFilterClick: (String) -> Unit) {
+fun PostListSuccess(
+    uiState: PostListUiState.Success,
+    onCategorySelect: (String) -> Unit,
+    onSuburbSelect: (String) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(content = {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    uiState.filters.forEach { filter ->
+                    uiState.categories.forEach { filter ->
                         FilterChip(
-                            selected = uiState.selectedFilters
+                            selected = uiState.selectedCategories
                                 .map { it.lowercase() }
                                 .contains(filter),
-                            onClick = { onFilterClick(filter) },
+                            onClick = { onCategorySelect(filter) },
                             content = { Text(text = filter) }
                         )
                     }
@@ -87,13 +101,27 @@ fun PostListSuccess(uiState: PostListUiState.Success, onFilterClick: (String) ->
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = paddingValues,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Row(
+            modifier = Modifier.padding(
+                start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                end = paddingValues.calculateEndPadding(LocalLayoutDirection.current)
+            )
         ) {
-            items(uiState.postList, key = { it.id }) { item ->
-                PostItem(item)
-            }
+            FiltersSection(
+                modifier = Modifier.width(200.dp),
+                categories = uiState.categories,
+                suburbs = uiState.suburbs,
+                selectedCategories = uiState.selectedCategories,
+                selectedSuburb = uiState.selectedSuburb,
+                onCategorySelect = onCategorySelect,
+                onSuburbSelect = onSuburbSelect
+            )
+
+            PostList(
+                modifier = Modifier.weight(1f),
+                paddingValues = paddingValues,
+                uiState = uiState
+            )
         }
     }
 }

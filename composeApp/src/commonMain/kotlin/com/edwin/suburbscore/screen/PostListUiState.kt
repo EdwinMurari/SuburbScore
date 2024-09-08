@@ -6,8 +6,10 @@ sealed interface PostListUiState {
 
     data class Success(
         val postList: List<Post>,
-        val selectedFilters: List<String>,
-        val filters: List<String>
+        val selectedCategories: Set<String>,
+        val categories: List<String>,
+        val suburbs: List<String>,
+        val selectedSuburb: String?
     ) : PostListUiState
 
     data object Error : PostListUiState

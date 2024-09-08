@@ -1,12 +1,10 @@
 package com.edwin.suburbscore.screen
 
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edwin.suburbscore.model.Post
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -19,38 +17,61 @@ class PostListViewModel : ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     private lateinit var postList: List<Post>
-    private val filterList = listOf("Affordable housing", "Traffic", "Crime", "Amenities")
 
     init {
         viewModelScope.launch {
             val byteArray = Res.readBytes("files/posts.json").decodeToString()
+
             postList = Json.decodeFromString<List<Post>>(byteArray)
+
+            val categoryList = postList.map { it.category }.distinct()
+            val suburbList = postList.map { it.suburb }.distinct()
+
             _uiState.value = PostListUiState.Success(
                 postList = postList,
-                filters = filterList,
-                selectedFilters = listOf()
+                categories = categoryList,
+                selectedCategories = setOf(),
+                suburbs = suburbList,
+                selectedSuburb = null
             )
         }
     }
 
-    fun onFilterSelect(filter: String) {
-        _uiState.update { currentState ->
-            (currentState as? PostListUiState.Success)?.let {
-                val newFilters = currentState.selectedFilters.toMutableList().apply {
-                    if (contains(filter)) {
-                        remove(filter)
-                    } else {
-                        add(filter)
-                    }
+    fun onCategorySelect(filter: String) {
+        _uiState.value = (_uiState.value as? PostListUiState.Success)?.let { currentState ->
+            val newFilters = currentState.selectedCategories.toMutableSet().apply { // Use Set
+                if (contains(filter)) {
+                    remove(filter)
+                } else {
+                    add(filter)
                 }
+            }
 
-                currentState.copy(
-                    postList = postList.filter { post ->
-                        if (newFilters.isEmpty()) true else newFilters.map { it.lowercase() }.contains(post.category.lowercase())
-                    },
-                    selectedFilters = newFilters
-                )
-            } ?: currentState
-        }
+            currentState.copy(
+                postList = if (newFilters.isEmpty()) {
+                    postList // Show all posts if no filters are selected
+                } else {
+                    postList.filter { post ->
+                        newFilters.contains(post.category) // Directly check without mapping
+                    }
+                },
+                selectedCategories = newFilters
+            )
+        } ?: _uiState.value // Preserve state if not Success
+    }
+
+    fun onSuburbSelect(suburb: String) {
+        _uiState.value = (_uiState.value as? PostListUiState.Success)?.let { currentState ->
+            currentState.copy(
+                postList = if (suburb.isBlank()) {
+                    postList // Show all posts if suburb is blank
+                } else {
+                    postList.filter { post ->
+                        post.suburb.equals(suburb, ignoreCase = true)
+                    }
+                },
+                selectedSuburb = suburb
+            )
+        } ?: _uiState.value // Preserve state if not Success
     }
 }
