@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -13,18 +12,20 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.edwin.suburbscore.screen.postlist.PostListScreen
 import com.edwin.suburbscore.screen.createpost.CreatePostForm
 import com.edwin.suburbscore.screen.dashboard.DashboardScreen
+import com.edwin.suburbscore.screen.postlist.PostListScreen
 import com.edwin.suburbscore.screen.suburbrating.SuburbRatingsPage
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -40,7 +41,7 @@ fun App() {
                 TopAppBar(
                     title = { Text("CITYZEN") },
                     actions = {
-                        if(currentView != ViewType.DASHBOARD) {
+                        if (currentView != ViewType.DASHBOARD) {
                             OutlinedButton(
                                 onClick = {
                                     updateCurrentView(
@@ -61,9 +62,11 @@ fun App() {
                                     contentDescription = "Toggle View"
                                 )
 
+                                Spacer(modifier = Modifier.width(4.dp))
+
                                 Text(
                                     text = when (currentView) {
-                                        ViewType.POSTS -> "Ratings"
+                                        ViewType.POSTS -> "Suburb Ratings"
                                         ViewType.RATINGS -> "Posts"
                                         ViewType.DASHBOARD -> "Don't show"
                                     }
@@ -81,10 +84,20 @@ fun App() {
                                 }
                             )
                         }) {
+                            Icon(
+                                imageVector = when (currentView) {
+                                    ViewType.DASHBOARD -> Icons.AutoMirrored.Rounded.ArrowBack
+                                    else -> Icons.Rounded.BarChart
+                                },
+                                contentDescription = "Toggle dashboard"
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
                             Text(
                                 text = when (currentView) {
                                     ViewType.DASHBOARD -> "Back"
-                                    else -> "Dashboard"
+                                    else -> "Dashboards"
                                 }
                             )
                         }
