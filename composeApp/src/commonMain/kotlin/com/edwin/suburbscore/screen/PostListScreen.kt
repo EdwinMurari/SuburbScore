@@ -1,17 +1,11 @@
-package com.edwin.suburbscore.screen
-
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FilterChip
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -22,10 +16,14 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.edwin.suburbscore.screen.FiltersSection
+import com.edwin.suburbscore.screen.PostList
+import com.edwin.suburbscore.screen.PostListUiState
+import com.edwin.suburbscore.screen.PostListViewModel
 
 @Composable
 fun PostListScreen(
@@ -49,11 +47,13 @@ fun PostListUi(
     AnimatedContent(uiState) { targetState ->
         when (targetState) {
             PostListUiState.Error -> {
-                Text("Something went wrong")
+                Text(text = "Something went wrong", modifier = Modifier.padding(16.dp))
             }
 
             PostListUiState.Loading -> {
-                CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
 
             is PostListUiState.Success -> {
@@ -67,7 +67,6 @@ fun PostListUi(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun PostListSuccess(
     uiState: PostListUiState.Success,
@@ -76,21 +75,9 @@ fun PostListSuccess(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(content = {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    uiState.categories.forEach { filter ->
-                        FilterChip(
-                            selected = uiState.selectedCategories
-                                .map { it.lowercase() }
-                                .contains(filter),
-                            onClick = { onCategorySelect(filter) },
-                            content = { Text(text = filter) }
-                        )
-                    }
-                }
-            })
+            TopAppBar(
+                title = { Text("Victoria Suburb Posts") }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {}) {
@@ -100,15 +87,14 @@ fun PostListSuccess(
                 )
             }
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         Row(
-            modifier = Modifier.padding(
-                start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                end = paddingValues.calculateEndPadding(LocalLayoutDirection.current)
-            )
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
         ) {
             FiltersSection(
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(250.dp),
                 categories = uiState.categories,
                 suburbs = uiState.suburbs,
                 selectedCategories = uiState.selectedCategories,
@@ -117,9 +103,10 @@ fun PostListSuccess(
                 onSuburbSelect = onSuburbSelect
             )
 
+            Spacer(modifier = Modifier.width(16.dp))
+
             PostList(
                 modifier = Modifier.weight(1f),
-                paddingValues = paddingValues,
                 uiState = uiState
             )
         }

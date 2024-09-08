@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +76,11 @@ fun PostItem(post: Post, onPostClick: (Post) -> Unit) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = post.suburb.uppercase(), style = MaterialTheme.typography.overline)
+                Text(
+                    text = post.suburb.uppercase(),
+                    style = MaterialTheme.typography.overline,
+                    textAlign = TextAlign.Center
+                )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -85,7 +90,7 @@ fun PostItem(post: Post, onPostClick: (Post) -> Unit) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "${post.upVotes}", fontSize = 12.sp)
+                Text(text = "${post.upVotes}", fontSize = 12.sp, textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -95,7 +100,7 @@ fun PostItem(post: Post, onPostClick: (Post) -> Unit) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "${post.views}", fontSize = 12.sp)
+                Text(text = "${post.views}", fontSize = 12.sp, textAlign = TextAlign.Center)
             }
 
             Spacer(modifier = Modifier.height(2.dp))
@@ -107,15 +112,17 @@ fun PostItem(post: Post, onPostClick: (Post) -> Unit) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = post.date, fontSize = 12.sp)
+                Text(text = post.date, fontSize = 12.sp, textAlign = TextAlign.Center)
+
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Icon(
                     Icons.Default.AccessTime,
                     contentDescription = "Time",
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = post.time, fontSize = 12.sp)
+                Text(text = post.time, fontSize = 12.sp, textAlign = TextAlign.Center)
             }
         }
     }
