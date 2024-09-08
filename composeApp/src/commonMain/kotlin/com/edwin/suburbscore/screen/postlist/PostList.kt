@@ -1,4 +1,4 @@
-package com.edwin.suburbscore.screen
+package com.edwin.suburbscore.screen.postlist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn

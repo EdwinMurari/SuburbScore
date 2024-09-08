@@ -1,4 +1,4 @@
-package com.edwin.suburbscore.screen
+package com.edwin.suburbscore.screen.postlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

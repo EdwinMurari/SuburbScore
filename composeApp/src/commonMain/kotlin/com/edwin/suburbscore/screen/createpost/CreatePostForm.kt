@@ -1,4 +1,4 @@
-package com.edwin.suburbscore.component
+package com.edwin.suburbscore.screen.postlist.createpost
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.edwin.suburbscore.component.CategoryDropdown
+import com.edwin.suburbscore.component.SuburbDropdown
 import com.edwin.suburbscore.model.Post
 
 @Composable

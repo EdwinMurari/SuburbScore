@@ -1,4 +1,4 @@
-package com.edwin.suburbscore.screen
+package com.edwin.suburbscore.screen.postlist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
