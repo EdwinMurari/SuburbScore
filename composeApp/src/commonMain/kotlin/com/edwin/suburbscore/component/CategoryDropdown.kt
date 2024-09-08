@@ -1,6 +1,7 @@
 package com.edwin.suburbscore.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -33,33 +38,41 @@ fun CategoryDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     Column {
-        Box {
-            // Clickable text to expand/collapse the dropdown
-            Text(
-                text = selectedCategory,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { expanded = !expanded }
-                    .padding(8.dp),
-                fontSize = 16.sp
-            )
+        Surface(
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
+            ),
+            shape = RoundedCornerShape(4.dp)
+        ) {
+            Box {
+                // Clickable text to expand/collapse the dropdown
+                Text(
+                    text = selectedCategory.titleCase(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { expanded = !expanded }
+                        .padding(8.dp),
+                    fontSize = 16.sp
+                )
 
-            // Dropdown icon
-            Icon(
-                Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown",
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterEnd)
-            )
+                // Dropdown icon
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterEnd)
+                )
+            }
         }
 
         // Dropdown content
         AnimatedVisibility(expanded) {
             LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
-                items(categories) { category ->
+                items(categories, key = { it }) { category ->
                     Text(
-                        text = category,
+                        text = category.titleCase(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -73,3 +86,6 @@ fun CategoryDropdown(
         }
     }
 }
+
+fun String.titleCase() =
+    split(" ").joinToString(" ") { it.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } }

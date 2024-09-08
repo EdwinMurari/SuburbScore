@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edwin.suburbscore.component.SuburbDropdown
+import com.edwin.suburbscore.component.titleCase
 
 @Composable
 fun FiltersSection(
@@ -73,7 +74,7 @@ fun CategoryFilterList(
                     }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = category)
+                Text(text = category.titleCase())
             }
         }
     }

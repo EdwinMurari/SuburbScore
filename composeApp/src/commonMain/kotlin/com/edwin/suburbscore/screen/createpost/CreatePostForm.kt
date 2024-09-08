@@ -1,4 +1,4 @@
-package com.edwin.suburbscore.screen.postlist.createpost
+package com.edwin.suburbscore.screen.createpost
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -27,14 +27,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.edwin.suburbscore.component.CategoryDropdown
 import com.edwin.suburbscore.component.SuburbDropdown
 import com.edwin.suburbscore.model.Post
-import com.edwin.suburbscore.screen.createpost.CreatePostUiState
-import com.edwin.suburbscore.screen.createpost.CreatePostViewModel
 
 @Composable
 fun CreatePostForm(
@@ -44,9 +43,14 @@ fun CreatePostForm(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Surface(shape = RoundedCornerShape(corner = CornerSize(16.dp))) {
+    Surface(
+        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+        color = MaterialTheme.colors.surface,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
         CreatePostUi(
-            modifier = modifier,
             uiState = uiState,
             onSave = {
                 viewModel.onSave(it)
@@ -59,31 +63,34 @@ fun CreatePostForm(
 
 @Composable
 fun CreatePostUi(
-    modifier: Modifier = Modifier,
     uiState: CreatePostUiState,
-    onClose: () -> Unit,
-    onSave: (Post) -> Unit
+    onSave: (Post) -> Unit,
+    onClose: () -> Unit
 ) {
     AnimatedContent(uiState) { targetState ->
         when (targetState) {
             CreatePostUiState.Error -> {
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Something went wrong", modifier = Modifier.padding(16.dp))
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Something went wrong",
+                        style = MaterialTheme.typography.h6,
+                        color = Color.Red, // Change color as needed
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
             }
 
             CreatePostUiState.Loading -> {
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
 
             is CreatePostUiState.Success -> {
                 CreatePostContent(
-                    modifier = modifier,
                     uiState = targetState,
-                    onClose = onClose,
-                    onSave = onSave
+                    onSave = onSave,
+                    onClose = onClose
                 )
             }
         }
@@ -92,10 +99,9 @@ fun CreatePostUi(
 
 @Composable
 fun CreatePostContent(
-    modifier: Modifier = Modifier,
     uiState: CreatePostUiState.Success,
-    onClose: () -> Unit,
-    onSave: (Post) -> Unit
+    onSave: (Post) -> Unit,
+    onClose: () -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -103,11 +109,15 @@ fun CreatePostContent(
     var selectedSuburb by remember { mutableStateOf(uiState.suburbs.firstOrNull() ?: "") }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text("Create New Post", style = MaterialTheme.typography.h6)
+        // Add a title with a larger font size
+        Text(
+            text = "Create New Post",
+            style = MaterialTheme.typography.h5
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -128,17 +138,32 @@ fun CreatePostContent(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Category Dropdown
-        CategoryDropdown(uiState.categories, selectedCategory) { newCategory ->
+        //  Category Selection
+        Text(
+            "Category",
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        CategoryDropdown(
+            categories = uiState.categories,
+            selectedCategory = selectedCategory
+        ) { newCategory ->
             selectedCategory = newCategory
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Suburb Dropdown
-        SuburbDropdown(uiState.suburbs, selectedSuburb) { newSuburb ->
+        //  Suburb Selection
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "Suburb",
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        SuburbDropdown(
+            suburbs = uiState.suburbs,
+            selectedSuburb = selectedSuburb
+        ) { newSuburb ->
             selectedSuburb = newSuburb
         }
 

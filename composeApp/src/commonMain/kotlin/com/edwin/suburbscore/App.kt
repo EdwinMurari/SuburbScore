@@ -6,6 +6,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -19,7 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.edwin.suburbscore.screen.postlist.PostListScreen
-import com.edwin.suburbscore.screen.postlist.createpost.CreatePostForm
+import com.edwin.suburbscore.screen.createpost.CreatePostForm
 import com.edwin.suburbscore.screen.suburbrating.SuburbRatingsPage
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -35,7 +36,7 @@ fun App() {
                 TopAppBar(
                     title = { Text("Victoria Suburb Posts") },
                     actions = {
-                        Button(
+                        OutlinedButton(
                             onClick = {
                                 updateCurrentView(
                                     when (currentView) {
