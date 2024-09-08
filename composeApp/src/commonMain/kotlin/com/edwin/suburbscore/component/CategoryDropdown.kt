@@ -1,6 +1,8 @@
 package com.edwin.suburbscore.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -31,28 +33,30 @@ fun CategoryDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     Column {
-        // Clickable text to expand/collapse the dropdown
-        Text(
-            text = selectedCategory,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(8.dp),
-            fontSize = 16.sp
-        )
+        Box {
+            // Clickable text to expand/collapse the dropdown
+            Text(
+                text = selectedCategory,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
+                    .padding(8.dp),
+                fontSize = 16.sp
+            )
 
-        // Dropdown icon
-        Icon(
-            Icons.Default.ArrowDropDown,
-            contentDescription = "Dropdown",
-            modifier = Modifier
-                .size(24.dp)
-                .align(Alignment.End)
-        )
+            // Dropdown icon
+            Icon(
+                Icons.Default.ArrowDropDown,
+                contentDescription = "Dropdown",
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterEnd)
+            )
+        }
 
         // Dropdown content
-        if (expanded) {
-            LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) { // Limit dropdown height
+        AnimatedVisibility(expanded) {
+            LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
                 items(categories) { category ->
                     Text(
                         text = category,

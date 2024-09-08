@@ -1,6 +1,8 @@
 package com.edwin.suburbscore.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -36,37 +38,29 @@ fun SuburbDropdown(
     val displayText = selectedSuburb ?: "Select Suburb"
 
     Column {
-        // Clickable text to expand/collapse the dropdown
-        Text(
-            text = displayText,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(8.dp),
-            fontSize = 16.sp
-        )
-
-        // Dropdown icon
-        Icon(
-            Icons.Default.ArrowDropDown,
-            contentDescription = "Dropdown",
-            modifier = Modifier
-                .size(24.dp)
-                .align(Alignment.End)
-        )
-
-        // Dropdown content
-        if (expanded) {
-            // Search field
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                label = { Text("Search suburbs") },
+        Box {
+            // Clickable text to expand/collapse the dropdown
+            Text(
+                text = displayText,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .clickable { expanded = !expanded }
+                    .padding(8.dp),
+                fontSize = 16.sp
             )
 
+            // Dropdown icon
+            Icon(
+                Icons.Default.ArrowDropDown,
+                contentDescription = "Dropdown",
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterEnd)
+            )
+        }
+
+        // Dropdown content
+        AnimatedVisibility(expanded) {
             val filteredSuburbs = if (searchText.isBlank()) {
                 suburbs
             } else {
@@ -75,6 +69,18 @@ fun SuburbDropdown(
 
             // Suburb list
             LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+                item {
+                    // Search field
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        label = { Text("Search suburbs") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                }
+
                 items(filteredSuburbs) { suburb ->
                     Text(
                         text = suburb,
@@ -83,7 +89,7 @@ fun SuburbDropdown(
                             .clickable {
                                 onSuburbSelect(suburb)
                                 expanded = false
-                                searchText = "" // Clear search text after selection
+                                searchText = ""
                             }
                             .padding(8.dp)
                     )
