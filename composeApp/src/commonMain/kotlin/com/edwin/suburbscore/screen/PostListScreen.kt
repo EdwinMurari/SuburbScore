@@ -1,3 +1,5 @@
+package com.edwin.suburbscore.screen
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -16,14 +18,14 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.edwin.suburbscore.screen.FiltersSection
-import com.edwin.suburbscore.screen.PostList
-import com.edwin.suburbscore.screen.PostListUiState
-import com.edwin.suburbscore.screen.PostListViewModel
+import com.edwin.suburbscore.component.CreatePostForm
 
 @Composable
 fun PostListScreen(
@@ -73,6 +75,8 @@ fun PostListSuccess(
     onCategorySelect: (String) -> Unit,
     onSuburbSelect: (String) -> Unit
 ) {
+    val (showCreatePostDialog, updateShowCreatePostDialog) = remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -80,7 +84,9 @@ fun PostListSuccess(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(
+                onClick = { updateShowCreatePostDialog(true) }
+            ) {
                 Icon(
                     imageVector = Icons.Default.Create,
                     contentDescription = "Create"
@@ -109,6 +115,19 @@ fun PostListSuccess(
                 modifier = Modifier.weight(1f),
                 uiState = uiState
             )
+
+            if (showCreatePostDialog) {
+                Dialog(
+                    onDismissRequest = { updateShowCreatePostDialog(false) }
+                ) {
+                    CreatePostForm(
+                        categories = uiState.categories,
+                        suburbs = uiState.suburbs,
+                        onClose = { updateShowCreatePostDialog(false) },
+                        onSave = {}
+                    )
+                }
+            }
         }
     }
 }
