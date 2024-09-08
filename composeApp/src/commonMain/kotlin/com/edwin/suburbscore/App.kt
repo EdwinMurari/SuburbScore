@@ -38,7 +38,7 @@ fun App() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Victoria Suburb Posts") },
+                    title = { Text("CITYZEN") },
                     actions = {
                         if(currentView != ViewType.DASHBOARD) {
                             OutlinedButton(
